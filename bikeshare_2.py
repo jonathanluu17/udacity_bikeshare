@@ -25,6 +25,7 @@ def get_filters():
     invalid = True
     while invalid:
         city = input('Please enter either chicago, new york city, or washington: ')
+        city = city.lower()
         if city not in ['chicago', 'new york city', 'washington']:
             print('Invalid input')
         else:
@@ -33,7 +34,8 @@ def get_filters():
     # get user input for month (all, january, february, ... , june)
     invalid = True
     while invalid:
-        month = input('Please enter a month january - december (lowercase) or "all": ')
+        month = input('Please enter a month january - december or "all": ')
+        month = month.lower()
         if month not in ['all', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']:
             print('Invalid input')
         else:
@@ -42,7 +44,8 @@ def get_filters():
     # get user input for day of week (all, monday, tuesday, ... sunday)
     invalid = True
     while invalid:
-        day = input('Please enter a day of the week monday-friday (lowercase) or "all": ')
+        day = input('Please enter a day of the week monday-friday or "all": ')
+        day = day.lower()
         if day not in ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
             print('Invalid input')
         else:
