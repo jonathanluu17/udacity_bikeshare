@@ -102,6 +102,8 @@ def time_stats(df):
     print('-'*40)
 
 
+
+
 def station_stats(df):
     """Displays statistics on the most popular stations and trip."""
 
@@ -160,6 +162,34 @@ def user_stats(df):
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
+    
+def view_raw_data(df):
+    # ask if raw data wants to be seen
+    see_data = True
+    #initial values that will be updated in while loop
+    end_row = 0
+    while see_data:
+        if end_row == 0:
+            user_ans = input('Would you like to see the raw data? (Yes/No): ')
+        else:
+            user_ans = input('Would you like to see more raw data? (Yes/No): ')
+        if user_ans.lower() not in ['yes', 'no']:
+            print('Invalid Input')
+        elif user_ans.lower() == 'no':
+            see_data = False
+        else:
+            # we print until we printed 5 lines
+            counter = 0
+            while counter < 5:
+                if end_row == df.shape[0]:
+                    print('No more data to show')
+                    see_data = False
+                    break
+                else:
+                    print(df.iloc[end_row])
+                    end_row += 1
+                    counter += 1
+
 
 def main():
     while True:
@@ -170,6 +200,7 @@ def main():
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df)
+        view_raw_data(df)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
