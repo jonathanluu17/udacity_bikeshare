@@ -170,9 +170,9 @@ def view_raw_data(df):
     end_row = 0
     while see_data:
         if end_row == 0:
-            user_ans = input('Would you like to see the raw data? (Yes/No): ')
+            user_ans = input('Would you like to see 5 lines of raw data? (Yes/No): ')
         else:
-            user_ans = input('Would you like to see more raw data? (Yes/No): ')
+            user_ans = input('Would you like to see 5 more lines raw data? (Yes/No): ')
         if user_ans.lower() not in ['yes', 'no']:
             print('Invalid Input')
         elif user_ans.lower() == 'no':
