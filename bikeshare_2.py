@@ -1,10 +1,15 @@
 import time
 import pandas as pd
 import numpy as np
+import calendar  #use this co convert integer back to day of week
 
 CITY_DATA = { 'chicago': 'chicago.csv',
               'new york city': 'new_york_city.csv',
               'washington': 'washington.csv' }
+
+#initialize dictionaries to go between text and number values
+month_values = {'january': 1, 'february': 2, 'march': 3, 'april': 4, 'may': 5, 'june': 6, 'july': 7, 'august': 8, 'september': 9, 'october': 10, 'november':11, 'december':12}
+day_values = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4}
 
 def get_filters():
     """
@@ -28,7 +33,7 @@ def get_filters():
     # get user input for month (all, january, february, ... , june)
     invalid = True
     while invalid:
-        month = input('Please enter a month (lowercase) or "all": ')
+        month = input('Please enter a month january - december (lowercase) or "all": ')
         if month not in ['all', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']:
             print('Invalid input')
         else:
@@ -37,8 +42,8 @@ def get_filters():
     # get user input for day of week (all, monday, tuesday, ... sunday)
     invalid = True
     while invalid:
-        day = input('Please enter a day of the week (lowercase) or "all": ')
-        if day not in ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday','saturday', 'sunday']:
+        day = input('Please enter a day of the week monday-friday (lowercase) or "all": ')
+        if day not in ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
             print('Invalid input')
         else:
             invalid = False
@@ -58,9 +63,19 @@ def load_data(city, month, day):
     Returns:
         df - Pandas DataFrame containing city data filtered by month and day
     """
-    file = pd.read_csv('{}.csv'.format(city.replace(' ', '_')))
-    
+    #convert new york city to new_york_city
+    df = pd.read_csv('{}.csv'.format(city.replace(' ', '_')))
+    # convert start time to date_time for ease of filtering
+    df['Start Time'] = pd.to_datetime(df['Start Time'])
 
+    #apply filters
+
+    # if we have a month filter
+    if month != 'all':
+        df = df[df['Start Time'].dt.month == month_values[month]]
+    # if we have day filter 
+    if day != 'all':
+        df = df[df['Start Time'].dt.dayofweek == day_values[day]]
 
     return df
 
@@ -72,13 +87,13 @@ def time_stats(df):
     start_time = time.time()
 
     # display the most common month
-
+    print('Most common month of travel is: {}'.format(calendar.month_name[df['Start Time'].dt.month.mode()[0]]))
 
     # display the most common day of week
-
+    print('Most common day of week is: {}'.format(calendar.day_name[df['Start Time'].dt.dayofweek.mode()[0]]))
 
     # display the most common start hour
-
+    print('Most common start hour is: {}'.format(df['Start Time'].dt.hour.mode()[0]))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -91,13 +106,13 @@ def station_stats(df):
     start_time = time.time()
 
     # display most commonly used start station
-
+    print('Most common start station is: {}'.format(df['Start Station'].mode()[0]))
 
     # display most commonly used end station
-
+    print('Most common end station is: {}'.format(df['End Station'].mode()[0]))
 
     # display most frequent combination of start station and end station trip
-
+    print('Most common combination of start and end stations is: {}'.format((df['Start Station'] + ' to ' + df['End Station']).mode()[0]))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -110,10 +125,10 @@ def trip_duration_stats(df):
     start_time = time.time()
 
     # display total travel time
-
+    print('Total travel time is: {}'.format(df['Trip Duration'].sum()))
 
     # display mean travel time
-
+    print('Average travel time is: {}'.format(df['Trip Duration'].mean()))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -126,13 +141,18 @@ def user_stats(df):
     start_time = time.time()
 
     # Display counts of user types
-
+    print('Number of subscribers: {}'.format(df['User Type'].value_counts()['Subscriber']))
+    print('Number of customers: {}'.format(df['User Type'].value_counts()['Customer']))
 
     # Display counts of gender
-
+    print('Number of males: {}'.format(df['Gender'].value_counts()['Male']))
+    print('Number of females: {}'.format(df['Gender'].value_counts()['Female']))
+    print('Number of non-binary: {}'.format(df['Gender'].isna().sum()))
 
     # Display earliest, most recent, and most common year of birth
-
+    print('Earliest birth year: {}'.format(df['Birth Year'].min()))
+    print('Most recent birth year: {}'.format(df['Birth Year'].max()))
+    print('Most common birth year: {}'.format(df['Birth Year'].mode()[0]))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
